@@ -5,3 +5,4 @@
 - case_title in Trial instead of case
 - file is stored as file_path, file_size_bytes, mime_type. earlier planned to store as blob but this is better.
 - associate made one table
+- removed amount_given from Associated_business because its a derived attribute.
