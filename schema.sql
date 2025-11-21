@@ -37,6 +37,7 @@ create table Client (
     address varchar(100),
     type varchar(10),
     date_joined date not null,
+    account_no int,
     lawyer_assigned int,
     primary key (client_id),
     foreign key (lawyer_assigned) references Lawyer(bar_number),
@@ -74,5 +75,83 @@ create table Document (
 );
 
 create table Documents_required (
+    document_id int,
+    trial_date date,
+    case_title varchar(20),
+    PRIMARY KEY (document_id, trial_date, case_title),
+    foreign key (document_id) references Document(document_id) on update cascade on delete cascade,
+    foreign key (trial_date, case_title) references Trial(trial_date, case_title) on update cascade on delete cascade
+);
+
+create table Casefile (
+    trial_date date,
+    document_id int,
+    case_title VARCHAR(20),
+    client_id int,
+    primary key (trial_date, document_id, case_title, client_id),
+    foreign key (trial_date, case_title) references Trial(trial_date, case_title) on update cascade on delete cascade,
+    foreign key (case_title) references Cases(case_title) on update cascade on delete cascade,
+    foreign key (document_id) REFERENCES Document(document_id) on update cascade on delete cascade,
+    foreign key (client_id) REFERENCES Client(client_id) on update cascade on delete cascade
+);
+
+create table Transaction (
+    transaction_id int,
+    source_account int,
+    destination_account int,
+    amount int,
+    date date,
+    primary key (transaction_id)
+);
+
+create table Fee_payment (
+    transaction_id int,
+    client_id int,
+    case_title varchar(20),
+    primary key (transaction_id),
+    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id) on update cascade on delete cascade,
+    Foreign Key (client_id) REFERENCES Client(client_id) on update cascade on delete set null,
+    Foreign Key (case_title) REFERENCES Cases(case_title) on update cascade on delete set null
+);
+
+create table Associate (
+    associate_id int,
+    name varchar(20),
+    status varchar(10),
+    loyalty_score int,
+    account_no int,
+    alias int,
+    primary key (associate_id),
+    Foreign Key (alias) REFERENCES Client(client_id) on update cascade on delete set null,
+    constraint loyalty_score_range check (loyalty_score between 1 and 10),
+    constraint check_status check (status in ('active', 'dead', 'missing'))
+);
+
+create table CriminalAssociate (
+    associate_id int,
+    codename varchar(10),
+    primary KEY (associate_id),
+    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
+);
+
+create table Skills(
+    skill_name varchar(50),
+    associate_id int,
+    primary key (skill_name, associate_id),
+    Foreign Key (associate_id) REFERENCES CriminalAssociate(associate_id) on update cascade on delete cascade
+);
+
+create table CartelAssociate (
+    associate_id int,
+    affiliation varchar(10)
+    primary key (associate_id),
     
 )
+
+-- create table Associated_business (
+--     business_name varchar(20),
+--     location varchar(10),
+--     account_no int,
+--     amount_given int,
+
+-- )
