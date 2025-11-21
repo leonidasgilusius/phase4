@@ -174,11 +174,45 @@ create table Hitlist (
     primary key (Target_id),
     Foreign Key (assigned_associate) REFERENCES CriminalAssociate(associate_id) on update cascade on delete set null,
     constraint status_vals check (status in ('Listed', 'Under Surveillance', 'Action Pending', 'Neutralized', 'De-escalated')),
-    constraint threat_level_vals check (threat_level in ('Low', 'Moderate', 'High', 'Critical')),
+    constraint threat_level_vals check (threat_level in ('Low', 'Moderate', 'High', 'Critical'))
 );
 
 create table Operation (
     operation_id int,
     name varchar(10),
-    
-)
+    description varchar(100),
+    primary key (operation_id)
+);
+
+create table PeopleInvolved (
+    operation_id int,
+    associate_id int,
+    primary key (operation_id, associate_id),
+    Foreign Key (operation_id) REFERENCES Operation(operation_id) on update cascade on delete cascade,
+    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
+);
+
+create table Task (
+    task_id int,
+    operation_id int,
+    description varchar(100),
+    status varchar(10),
+    deadline date,
+    assigned_to int,
+    primary key (task_id, operation_id),
+    Foreign Key (operation_id) REFERENCES Operation(operation_id),
+    Foreign Key (assigned_to) REFERENCES Associate(associate_id),
+    constraint status_vals check (status in ('pending', 'failed', 'done'))
+);
+
+create table Compensation (
+    associate_id int,
+    task_id int,
+    operation_id int,
+    transaction_id int,
+    primary key (associate_id, task_id, operation_id, transaction_id),
+    Foreign Key (associate_id) REFERENCES Associate(associate_id),
+    Foreign Key (task_id, operation_id) REFERENCES Task(task_id, operation_id),
+    Foreign Key (operation_id) REFERENCES Operation(operation_id),
+    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id)
+);
