@@ -1,0 +1,6 @@
+// -exchanging names of Client and Client_account
+// -changing account_no in (now) Client to client_id
+- Client and Client_account is made as one table temporarily
+- Cases instead of Case
+- case_title in Trial instead of case
+- file is stored as file_path, file_size_bytes, mime_type. earlier planned to store as blob but this is better.
