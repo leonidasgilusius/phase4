@@ -32,10 +32,10 @@ create table Client (
     client_id int,
     first_name varchar(15) not null,
     last_name varchar(10) not null,
-    phone int,
+    phone BIGINT,
     email varchar(30),
     address varchar(100),
-    type varchar(10),
+    type varchar(25),
     date_joined date not null,
     account_no int,
     lawyer_assigned int,
@@ -143,15 +143,42 @@ create table Skills(
 
 create table CartelAssociate (
     associate_id int,
-    affiliation varchar(10)
+    affiliation varchar(10),
     primary key (associate_id),
+    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
+);
+
+create table Associated_business (
+    business_name varchar(20),
+    location varchar(20),
+    account_no int,
+    handler_id int,
+    PRIMARY KEY (business_name, location),
+    Foreign Key (handler_id) REFERENCES CriminalAssociate(associate_id) on update cascade on delete set null
+);
+
+create table Associated_business_type (
+    business_name varchar(20),
+    business_type varchar(20),
+    primary key (business_name),
+    Foreign Key (business_name) REFERENCES Associated_business(business_name) on update cascade on delete cascade
+);
+
+create table Hitlist (
+    Target_id int,
+    codename varchar(10),
+    status varchar(20),
+    justification varchar(100),
+    threat_level varchar(20),
+    assigned_associate int,
+    primary key (Target_id),
+    Foreign Key (assigned_associate) REFERENCES CriminalAssociate(associate_id) on update cascade on delete set null,
+    constraint status_vals check (status in ('Listed', 'Under Surveillance', 'Action Pending', 'Neutralized', 'De-escalated')),
+    constraint threat_level_vals check (threat_level in ('Low', 'Moderate', 'High', 'Critical')),
+);
+
+create table Operation (
+    operation_id int,
+    name varchar(10),
     
 )
-
--- create table Associated_business (
---     business_name varchar(20),
---     location varchar(10),
---     account_no int,
---     amount_given int,
-
--- )
