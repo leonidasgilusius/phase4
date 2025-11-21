@@ -164,6 +164,15 @@ create table Associated_business_type (
     Foreign Key (business_name) REFERENCES Associated_business(business_name) on update cascade on delete cascade
 );
 
+create table Business_fee (
+    transaction_id int,
+    business_name VARCHAR(20),
+    location VARCHAR(20),
+    primary key (transaction_id, business_name, location),
+    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id) on update cascade on delete cascade,
+    Foreign Key (business_name, location) REFERENCES Associated_business(business_name, location)
+);
+
 create table Hitlist (
     Target_id int,
     codename varchar(10),
@@ -200,8 +209,8 @@ create table Task (
     deadline date,
     assigned_to int,
     primary key (task_id, operation_id),
-    Foreign Key (operation_id) REFERENCES Operation(operation_id),
-    Foreign Key (assigned_to) REFERENCES Associate(associate_id),
+    Foreign Key (operation_id) REFERENCES Operation(operation_id) on update CASCADE on delete CASCADE,
+    Foreign Key (assigned_to) REFERENCES Associate(associate_id) on update cascade on delete set null,
     constraint status_vals check (status in ('pending', 'failed', 'done'))
 );
 
@@ -211,8 +220,8 @@ create table Compensation (
     operation_id int,
     transaction_id int,
     primary key (associate_id, task_id, operation_id, transaction_id),
-    Foreign Key (associate_id) REFERENCES Associate(associate_id),
-    Foreign Key (task_id, operation_id) REFERENCES Task(task_id, operation_id),
-    Foreign Key (operation_id) REFERENCES Operation(operation_id),
-    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id)
+    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade,
+    Foreign Key (task_id, operation_id) REFERENCES Task(task_id, operation_id) on update cascade on delete cascade,
+    Foreign Key (operation_id) REFERENCES Operation(operation_id) on update cascade on delete cascade,
+    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id) on update cascade on delete cascade
 );
