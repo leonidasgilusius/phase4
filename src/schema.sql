@@ -1,3 +1,5 @@
+drop DATABASE if EXISTS ItsAllGoodMan;
+
 CREATE DATABASE if not exists ItsAllGoodMan;
 
 USE ItsAllGoodMan;
@@ -33,10 +35,8 @@ create table Client (
     first_name varchar(15) not null,
     last_name varchar(10) not null,
     phone BIGINT,
-    phone BIGINT,
     email varchar(30),
     address varchar(100),
-    type varchar(25),
     type varchar(25),
     date_joined date not null,
     account_no int,
@@ -146,88 +146,7 @@ create table Skills(
 create table CartelAssociate (
     associate_id int,
     affiliation varchar(10),
-    affiliation varchar(10),
     primary key (associate_id),
-    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
-);
-
-create table Associated_business (
-    business_name varchar(20),
-    location varchar(20),
-    account_no int,
-    handler_id int,
-    PRIMARY KEY (business_name, location),
-    Foreign Key (handler_id) REFERENCES CriminalAssociate(associate_id) on update cascade on delete set null
-);
-
-create table Associated_business_type (
-    business_name varchar(20),
-    business_type varchar(20),
-    primary key (business_name),
-    Foreign Key (business_name) REFERENCES Associated_business(business_name) on update cascade on delete cascade
-);
-
-create table Business_fee (
-    transaction_id int,
-    business_name VARCHAR(20),
-    location VARCHAR(20),
-    primary key (transaction_id, business_name, location),
-    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id) on update cascade on delete cascade,
-    Foreign Key (business_name, location) REFERENCES Associated_business(business_name, location)
-);
-
-create table Hitlist (
-    Target_id int,
-    codename varchar(10),
-    status varchar(20),
-    justification varchar(100),
-    threat_level varchar(20),
-    assigned_associate int,
-    primary key (Target_id),
-    Foreign Key (assigned_associate) REFERENCES CriminalAssociate(associate_id) on update cascade on delete set null,
-    constraint status_vals check (status in ('Listed', 'Under Surveillance', 'Action Pending', 'Neutralized', 'De-escalated')),
-    constraint threat_level_vals check (threat_level in ('Low', 'Moderate', 'High', 'Critical'))
-);
-
-create table Operation (
-    operation_id int,
-    name varchar(10),
-    description varchar(100),
-    primary key (operation_id)
-);
-
-create table PeopleInvolved (
-    operation_id int,
-    associate_id int,
-    primary key (operation_id, associate_id),
-    Foreign Key (operation_id) REFERENCES Operation(operation_id) on update cascade on delete cascade,
-    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
-);
-
-create table Task (
-    task_id int,
-    operation_id int,
-    description varchar(100),
-    status varchar(10),
-    deadline date,
-    assigned_to int,
-    primary key (task_id, operation_id),
-    Foreign Key (operation_id) REFERENCES Operation(operation_id) on update CASCADE on delete CASCADE,
-    Foreign Key (assigned_to) REFERENCES Associate(associate_id) on update cascade on delete set null,
-    constraint status_vals check (status in ('pending', 'failed', 'done'))
-);
-
-create table Compensation (
-    associate_id int,
-    task_id int,
-    operation_id int,
-    transaction_id int,
-    primary key (associate_id, task_id, operation_id, transaction_id),
-    Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade,
-    Foreign Key (task_id, operation_id) REFERENCES Task(task_id, operation_id) on update cascade on delete cascade,
-    Foreign Key (operation_id) REFERENCES Operation(operation_id) on update cascade on delete cascade,
-    Foreign Key (transaction_id) REFERENCES Transaction(transaction_id) on update cascade on delete cascade
-);
     Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
 );
 
