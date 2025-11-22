@@ -4,18 +4,35 @@ from services.validation import validate_role, validate_client_type, validate_ca
 
 logger = logging.getLogger(__name__)
 
-def create_employee(conn, employee_id, first_name, last_name, role, salary, trust_level):
+def _quote_ident(name: str) -> str:
+    return f"`{name}`"
+
+def _next_id(conn, table: str, id_col: str) -> int:
+    t = _quote_ident(table) if table.lower() == "transaction" else table
+    c = id_col
+    with conn.cursor() as cur:
+        cur.execute(f"SELECT COALESCE(MAX({c}),0)+1 AS next_id FROM {t}")
+        nid = cur.fetchone()["next_id"] or 1
+        while True:
+            cur.execute(f"SELECT 1 FROM {t} WHERE {c}=%s", (nid,))
+            if not cur.fetchone():
+                break
+            nid += 1
+    return int(nid)
+
+def create_employee(conn, first_name, last_name, role, salary, trust_level):
     role = validate_role(role)
-    employee_id = ensure_int(employee_id)
     salary = ensure_int(salary)
     trust_level = ensure_int(trust_level)
     try:
         with conn.cursor() as cur:
+            new_id = _next_id(conn, "Employee", "employee_id")
             sql = "INSERT INTO Employee (employee_id, first_name, last_name, role, salary, trust_level) VALUES (%s,%s,%s,%s,%s,%s)"
-            params = (employee_id, first_name, last_name, role, salary, trust_level)
+            params = (new_id, first_name, last_name, role, salary, trust_level)
             logger.debug("create_employee %s", params)
             cur.execute(sql, params)
         conn.commit()
+        return new_id
     except Exception:
         conn.rollback()
         raise
@@ -53,8 +70,7 @@ def add_specializations(conn, bar_number, specializations: Iterable[str]):
         conn.rollback()
         raise
 
-def create_client(conn, client_id, first_name, last_name, phone, email, address, type_value, date_joined, account_no, lawyer_assigned):
-    client_id = ensure_int(client_id)
+def create_client(conn, first_name, last_name, phone, email, address, type_value, date_joined, account_no, lawyer_assigned):
     phone = validate_phone(phone)
     email = validate_email(email)
     type_value = validate_client_type(type_value)
@@ -63,12 +79,14 @@ def create_client(conn, client_id, first_name, last_name, phone, email, address,
     lawyer_assigned = ensure_int(lawyer_assigned) if lawyer_assigned not in (None, "") else None
     try:
         with conn.cursor() as cur:
+            new_id = _next_id(conn, "Client", "client_id")
             sql = """INSERT INTO Client (client_id, first_name, last_name, phone, email, address, type, date_joined, account_no, lawyer_assigned)
                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-            params = (client_id, first_name, last_name, phone, email, address, type_value, date_joined, account_no, lawyer_assigned)
+            params = (new_id, first_name, last_name, phone, email, address, type_value, date_joined, account_no, lawyer_assigned)
             logger.debug("create_client %s", params)
             cur.execute(sql, params)
         conn.commit()
+        return new_id
     except Exception:
         conn.rollback()
         raise
@@ -144,8 +162,7 @@ def add_required_document(conn, case_title, trial_date, document_id):
         conn.rollback()
         raise
 
-def record_fee_payment(conn, transaction_id, source_account, destination_account, amount, date_value, client_id, case_title):
-    transaction_id = ensure_int(transaction_id)
+def record_fee_payment(conn, source_account, destination_account, amount, date_value, client_id, case_title):
     source_account = ensure_int(source_account)
     destination_account = ensure_int(destination_account)
     amount = ensure_int(amount)
@@ -153,6 +170,7 @@ def record_fee_payment(conn, transaction_id, source_account, destination_account
     client_id = ensure_int(client_id)
     try:
         with conn.cursor() as cur:
+            transaction_id = _next_id(conn, "Transaction", "transaction_id")
             sql1 = "INSERT INTO `Transaction` (transaction_id, source_account, destination_account, amount, date) VALUES (%s,%s,%s,%s,%s)"
             p1 = (transaction_id, source_account, destination_account, amount, date_value)
             logger.debug("record_fee_payment.transaction %s", p1)
@@ -162,23 +180,25 @@ def record_fee_payment(conn, transaction_id, source_account, destination_account
             logger.debug("record_fee_payment.fee %s", p2)
             cur.execute(sql2, p2)
         conn.commit()
+        return transaction_id
     except Exception:
         conn.rollback()
         raise
 
-def create_associate(conn, associate_id, name, status, loyalty_score, account_no, alias_client_id):
-    associate_id = ensure_int(associate_id)
+def create_associate(conn, name, status, loyalty_score, account_no, alias_client_id):
     status = validate_associate_status(status)
     loyalty_score = ensure_int(loyalty_score)
     account_no = ensure_int(account_no) if account_no not in (None, "") else None
     alias_client_id = ensure_int(alias_client_id) if alias_client_id not in (None, "") else None
     try:
         with conn.cursor() as cur:
+            new_id = _next_id(conn, "Associate", "associate_id")
             sql = "INSERT INTO Associate (associate_id, name, status, loyalty_score, account_no, alias) VALUES (%s,%s,%s,%s,%s,%s)"
-            params = (associate_id, name, status, loyalty_score, account_no, alias_client_id)
+            params = (new_id, name, status, loyalty_score, account_no, alias_client_id)
             logger.debug("create_associate %s", params)
             cur.execute(sql, params)
         conn.commit()
+        return new_id
     except Exception:
         conn.rollback()
         raise
@@ -209,12 +229,12 @@ def add_skill(conn, associate_id, skill_name):
         conn.rollback()
         raise
 
-def create_document(conn, document_id, title, type_value, file_path, file_size_bytes, mime_type, create_date):
-    document_id = ensure_int(document_id)
+def create_document(conn, title, type_value, file_path, file_size_bytes, mime_type, create_date):
     file_size_bytes = ensure_int(file_size_bytes)
     create_date = ensure_date_str(create_date)
     try:
         with conn.cursor() as cur:
+            document_id = _next_id(conn, "Document", "document_id")
             sql = (
                 "INSERT INTO Document (document_id, title, type, file_path, file_size_bytes, mime_type, create_date) "
                 "VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -223,6 +243,7 @@ def create_document(conn, document_id, title, type_value, file_path, file_size_b
             logger.debug("create_document %s", params)
             cur.execute(sql, params)
         conn.commit()
+        return document_id
     except Exception:
         conn.rollback()
         raise

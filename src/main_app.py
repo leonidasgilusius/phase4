@@ -6,14 +6,14 @@ from db.connection import get_connection
 configure_logging()
 logger = logging.getLogger(__name__)
 
-st.set_page_config(page_title="ItsAllGoodMan - App", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ItsAllGoodman App", layout="wide", initial_sidebar_state="expanded")
 
 # Sidebar debug toggle
 if "debug" not in st.session_state:
     st.session_state["debug"] = False
 st.sidebar.checkbox("Debug mode (show SQL)", value=st.session_state["debug"], key="debug")
 
-st.title("ItsAllGoodMan - Legal Practice Interface")
+st.title("ItsAllGoodman App")
 
 try:
     conn = get_connection()

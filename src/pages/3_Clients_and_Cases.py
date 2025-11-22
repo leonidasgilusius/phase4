@@ -35,7 +35,6 @@ st.subheader("Create Client")
 with st.form("create_client_form"):
     c1, c2, c3 = st.columns(3)
     with c1:
-        client_id = st.text_input("Client ID")
         first_name = st.text_input("First Name")
         last_name = st.text_input("Last Name")
     with c2:
@@ -51,7 +50,7 @@ with st.form("create_client_form"):
     sub = st.form_submit_button("Create")
     if sub:
         try:
-            create_client(conn, client_id, first_name, last_name, phone, email, address, type_value, date_joined, account_no or None, lawyer_assigned)
+            new_id = create_client(conn, first_name, last_name, phone, email, address, type_value, date_joined, account_no or None, lawyer_assigned)
             st.success("Client created")
         except Exception as e:
             logger.exception("create_client failed")

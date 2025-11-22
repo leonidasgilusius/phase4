@@ -277,3 +277,64 @@ def list_mime_types(conn):
         cur.execute(sql)
         _ui_debug(sql, None)
         return [row["mime_type"] for row in cur.fetchall()]
+
+def get_upcoming_trials(conn, days=14):
+    sql = (
+        "SELECT trial_date, case_title FROM Trial "
+        "WHERE trial_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL %s DAY) "
+        "ORDER BY trial_date ASC"
+    )
+    with conn.cursor() as cur:
+        cur.execute(sql, (days,))
+        _ui_debug(sql, (days,))
+        return cur.fetchall()
+
+def list_documents_basic(conn, limit=1000):
+    sql = "SELECT document_id, title FROM Document ORDER BY create_date DESC LIMIT %s"
+    with conn.cursor() as cur:
+        cur.execute(sql, (int(limit),))
+        _ui_debug(sql, (int(limit),))
+        return cur.fetchall()
+
+def list_employees_basic(conn, limit=1000):
+    sql = "SELECT employee_id, first_name, last_name FROM Employee ORDER BY first_name, last_name LIMIT %s"
+    with conn.cursor() as cur:
+        cur.execute(sql, (int(limit),))
+        _ui_debug(sql, (int(limit),))
+        return cur.fetchall()
+
+def list_associates_basic(conn, limit=1000):
+    sql = "SELECT associate_id, name FROM Associate ORDER BY name LIMIT %s"
+    with conn.cursor() as cur:
+        cur.execute(sql, (int(limit),))
+        _ui_debug(sql, (int(limit),))
+        return cur.fetchall()
+
+def list_distinct_skills(conn):
+    sql = "SELECT DISTINCT skill_name FROM Skills ORDER BY skill_name"
+    with conn.cursor() as cur:
+        cur.execute(sql)
+        _ui_debug(sql, None)
+        return [row["skill_name"] for row in cur.fetchall()]
+
+def list_all_skills(conn):
+    sql = (
+        "SELECT s.skill_name, s.associate_id, a.name "
+        "FROM Skills s JOIN Associate a ON a.associate_id = s.associate_id "
+        "ORDER BY s.skill_name, a.name"
+    )
+    with conn.cursor() as cur:
+        cur.execute(sql)
+        _ui_debug(sql, None)
+        return cur.fetchall()
+
+def list_criminal_associates(conn):
+    sql = (
+        "SELECT ca.associate_id, a.name, ca.codename "
+        "FROM CriminalAssociate ca JOIN Associate a ON a.associate_id = ca.associate_id "
+        "ORDER BY a.name"
+    )
+    with conn.cursor() as cur:
+        cur.execute(sql)
+        _ui_debug(sql, None)
+        return cur.fetchall()
