@@ -16,11 +16,16 @@ with st.form("create_employee"):
     role = st.selectbox("Role", ["lawyer","paralegal","receptionist","investigator"])
     salary = st.text_input("Salary")
     trust_level = st.number_input("Trust Level (1-10)", min_value=1, max_value=10, value=5, step=1)
+    bar_num_new = st.text_input("Bar Number (optional, only if role is lawyer)") if role == "lawyer" else None
     submitted = st.form_submit_button("Create")
     if submitted:
         try:
             new_id = create_employee(conn, first_name, last_name, role, salary, trust_level)
-            st.success("Employee created")
+            if role == "lawyer":
+                assigned_bar = upgrade_to_lawyer(conn, new_id, bar_num_new)
+                st.success(f"Employee created and promoted to Lawyer with bar number {assigned_bar}")
+            else:
+                st.success("Employee created")
         except Exception as e:
             logger.exception("create_employee failed")
             st.error(f"{e}")
