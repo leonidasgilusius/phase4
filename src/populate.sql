@@ -46,13 +46,13 @@ INSERT INTO Client (client_id, first_name, last_name, phone, email, address, typ
 (204, 'Rag', 'Decorator', 6059291111, 'ash@yahoo.com', 'Viggay Hall Road', 'cartel-affiliated', '2002-07-25', 7704, 18392);
 
 INSERT INTO Associate (associate_id, name, status, loyalty_score, account_no, alias) VALUES 
-(1001, 'Lalo Salamanca', 'active', 9, 7701, 201),
+(1001, 'Lalo Salamanca', 'dead', 9, 7701, 201),
 (1002, 'Sanjith Ganapathi', 'active', 8, 7702, NULL),
-(1003, 'Sreevijay Sunil', 'active', 10, 7703, NULL),
+(1003, 'Sreevijay Sunil', 'missing', 10, 7703, NULL),
 (1004, 'Ashlin Sunil', 'active', 7, 7704, 204),
 (1005, 'Tuco Salamanca', 'active', 5, 7705, 203),
 (1006, 'Mike Ehrmantraut', 'active', 10, 7706, NULL),
-(1007, 'Ignacio Varga', 'active', 9, 7707, 103),
+(1007, 'Ignacio Varga', 'dead', 9, 7707, 103),
 (1009, 'Skinny Pete', 'active', 10, 7709, 102);
 
 INSERT INTO CriminalAssociate (associate_id, codename) VALUES 

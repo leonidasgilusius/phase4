@@ -101,7 +101,7 @@ create table Transaction (
     transaction_id int,
     source_account int,
     destination_account int,
-    amount int,
+    amount BIGINT,
     date date,
     primary key (transaction_id)
 );
