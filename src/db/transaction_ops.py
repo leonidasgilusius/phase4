@@ -50,7 +50,7 @@ def upgrade_to_lawyer(conn, employee_id, bar_number):
                 raise ValueError("Employee is already a lawyer")
             # Determine bar number
             if bar_number in (None, ""):
-                assigned_bar = _next_id(conn, "Lawyer", "bar_number")
+                raise ValueError("Bar number is required")
             else:
                 assigned_bar = ensure_int(bar_number)
             sql = "INSERT INTO Lawyer (lawyer_id, bar_number) VALUES (%s,%s)"
