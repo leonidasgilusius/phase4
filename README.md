@@ -11,7 +11,7 @@
     ```bash
     pip install -r requirements.txt
     ```
-- to run, first go to src 
+    to run, first go to src 
     ```bash
     cd src
     ``` 
