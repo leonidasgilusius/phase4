@@ -5,6 +5,7 @@ from pymysql.cursors import DictCursor
 from config.settings import get_db_settings
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 logger = logging.getLogger(__name__)
