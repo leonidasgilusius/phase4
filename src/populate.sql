@@ -42,7 +42,7 @@ INSERT INTO Client (client_id, first_name, last_name, phone, email, address, typ
 (105, 'Lydia', 'Rodarte', 5059998111, 'lydia@madrigal.de', 'Madrigal Electromotive', 'business', '2003-11-15', 9005, 09283),
 (201, 'Jorge', 'Degruzman', 5058425999, 'temp@hotmail.com', 'Chihuahua, MX', 'cartel-affiliated', '2004-06-20', 7701, 18392),
 (202, 'Gustavo', 'Fring', 5052429999, 'owner@lospollos.com', 'Los Pollos Hermanos', 'business', '2001-01-01', 6662, 09283),
-(203, 'Biz', 'Natch', 5059991111, 'biznatch@yahoo.com', 'The South Valley', 'cartel-affiliated', '2002-03-15', 7705, 18392);
+(203, 'Biz', 'Natch', 5059991111, 'biznatch@yahoo.com', 'The South Valley', 'cartel-affiliated', '2002-03-15', 7705, 18392),
 (204, 'Rag', 'Decorator', 6059291111, 'ash@yahoo.com', 'Viggay Hall Road', 'cartel-affiliated', '2002-07-25', 7704, 18392);
 
 INSERT INTO Associate (associate_id, name, status, loyalty_score, account_no, alias) VALUES 

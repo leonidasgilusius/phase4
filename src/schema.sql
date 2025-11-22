@@ -6,8 +6,8 @@ USE ItsAllGoodMan;
 
 CREATE table Employee (
     employee_id int,
-    first_name varchar(15) NOT NULL,
-    last_name varchar(10) not null,
+    first_name varchar(20) NOT NULL,
+    last_name varchar(20) not null,
     role varchar(20),
     salary int,
     trust_level int,
@@ -32,8 +32,8 @@ create table Specialization_table (
 
 create table Client (
     client_id int,
-    first_name varchar(15) not null,
-    last_name varchar(10) not null,
+    first_name varchar(20) not null,
+    last_name varchar(20) not null,
     phone BIGINT,
     email varchar(30),
     address varchar(100),
@@ -68,7 +68,7 @@ create table Trial (
 create table Document (
     document_id int,
     title varchar(20),
-    type varchar(10),
+    type varchar(20),
     file_path VARCHAR(500) NOT NULL,
     file_size_bytes INT,
     mime_type VARCHAR(50),
@@ -131,7 +131,7 @@ create table Associate (
 
 create table CriminalAssociate (
     associate_id int,
-    codename varchar(10),
+    codename varchar(20),
     primary KEY (associate_id),
     Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
 );
@@ -145,7 +145,7 @@ create table Skills(
 
 create table CartelAssociate (
     associate_id int,
-    affiliation varchar(10),
+    affiliation varchar(20),
     primary key (associate_id),
     Foreign Key (associate_id) REFERENCES Associate(associate_id) on update cascade on delete cascade
 );
@@ -177,7 +177,7 @@ create table Business_fee (
 
 create table Hitlist (
     Target_id int,
-    codename varchar(10),
+    codename varchar(20),
     status varchar(20),
     justification varchar(100),
     threat_level varchar(20),
@@ -190,7 +190,7 @@ create table Hitlist (
 
 create table Operation (
     operation_id int,
-    name varchar(10),
+    name varchar(20),
     description varchar(100),
     primary key (operation_id)
 );
