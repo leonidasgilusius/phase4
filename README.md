@@ -7,5 +7,4 @@
     MYSQL_DATABASE=ItsAllGoodMan
 - install requirement from requirements.txt
     `pip install -r requirements.txt`
-- to run 
-    `streamlit run main_app.py`
+- to run, first go to src `cd src` and then run `streamlit run main_app.py`. Open the url given in a  browser
