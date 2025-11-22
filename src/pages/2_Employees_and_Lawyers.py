@@ -30,12 +30,12 @@ with st.form("upgrade_lawyer"):
     emps = list_employees_basic(conn)
     emp_map = {f"{r['employee_id']} - {r['first_name']} {r['last_name']}": r['employee_id'] for r in emps}
     emp_sel = st.selectbox("Employee", list(emp_map.keys()))
-    bar_num = st.text_input("Bar Number")
+    bar_num = st.text_input("Bar Number (optional, auto-assigned if empty)")
     submitted2 = st.form_submit_button("Upgrade")
     if submitted2:
         try:
-            upgrade_to_lawyer(conn, emp_map[emp_sel], bar_num)
-            st.success("Lawyer created")
+            assigned = upgrade_to_lawyer(conn, emp_map[emp_sel], bar_num)
+            st.success(f"Lawyer created with bar number {assigned}")
         except Exception as e:
             logger.exception("upgrade_to_lawyer failed")
             st.error(f"{e}")

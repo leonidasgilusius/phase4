@@ -39,17 +39,26 @@ def create_employee(conn, first_name, last_name, role, salary, trust_level):
 
 def upgrade_to_lawyer(conn, employee_id, bar_number):
     employee_id = ensure_int(employee_id)
-    bar_number = ensure_int(bar_number)
     try:
         with conn.cursor() as cur:
             cur.execute("SELECT 1 FROM Employee WHERE employee_id=%s", (employee_id,))
             if not cur.fetchone():
                 raise ValueError("Employee not found")
+            # Prevent duplicate promotion
+            cur.execute("SELECT 1 FROM Lawyer WHERE lawyer_id=%s", (employee_id,))
+            if cur.fetchone():
+                raise ValueError("Employee is already a lawyer")
+            # Determine bar number
+            if bar_number in (None, ""):
+                assigned_bar = _next_id(conn, "Lawyer", "bar_number")
+            else:
+                assigned_bar = ensure_int(bar_number)
             sql = "INSERT INTO Lawyer (lawyer_id, bar_number) VALUES (%s,%s)"
-            params = (employee_id, bar_number)
+            params = (employee_id, assigned_bar)
             logger.debug("upgrade_to_lawyer %s", params)
             cur.execute(sql, params)
         conn.commit()
+        return assigned_bar
     except Exception:
         conn.rollback()
         raise
