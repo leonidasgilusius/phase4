@@ -93,7 +93,7 @@ INSERT INTO Cases (case_title, client_id, description, status) VALUES
 -- =======================================================
 INSERT INTO Trial (trial_date, case_title) VALUES 
 ('2003-09-05', 'Mesa Verde Exp'),
-('2003-11-10', 'Sandpiper Crossing'),
+('2025-11-25', 'Sandpiper Crossing'),
 ('2002-07-15', 'Kettleman Embezzle'),
 ('2004-08-15', 'State v. DeGuzman'),
 ('2002-04-20', 'Tuco Assault');
@@ -135,12 +135,13 @@ INSERT INTO Transaction (transaction_id, source_account, destination_account, am
 (1003, 6661, 9999, 7000000, '2004-08-16'), -- Lalo Bail (Big money)
 (1004, 6662, 7701, 5000, '2003-10-02'),    -- Gus pays Leon
 (1005, 6662, 7703, 7500, '2003-10-06'),    -- Gus pays Sreevijay
-(1006, 6663, 7704, 2000, '2003-10-07');    -- Tuco pays Ashlin
+(1006, 6663, 7704, 2000, '2025-11-07');    -- Tuco pays Ashlin
 
 INSERT INTO Fee_payment (transaction_id, client_id, case_title) VALUES 
 (1001, 101, 'Mesa Verde Exp'),
 (1002, 105, 'Madrigal Audit'),
-(1003, 201, 'State v. DeGuzman');
+(1003, 201, 'State v. DeGuzman'),
+(1006, 203, 'Tuco Assault');
 
 -- =======================================================
 -- 10. HITLIST (Just a few)

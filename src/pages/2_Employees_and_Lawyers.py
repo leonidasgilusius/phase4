@@ -35,7 +35,7 @@ with st.form("upgrade_lawyer"):
     emps = list_employees_basic(conn)
     emp_map = {f"{r['employee_id']} - {r['first_name']} {r['last_name']}": r['employee_id'] for r in emps}
     emp_sel = st.selectbox("Employee", list(emp_map.keys()))
-    bar_num = st.text_input("Bar Number (optional, auto-assigned if empty)")
+    bar_num = st.text_input("Bar Number")
     submitted2 = st.form_submit_button("Upgrade")
     if submitted2:
         try:
