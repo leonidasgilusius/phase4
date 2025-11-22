@@ -184,7 +184,7 @@ create table Hitlist (
     assigned_associate int,
     primary key (Target_id),
     Foreign Key (assigned_associate) REFERENCES CriminalAssociate(associate_id) on update cascade on delete set null,
-    constraint status_vals check (status in ('Listed', 'Under Surveillance', 'Action Pending', 'Neutralized', 'De-escalated')),
+    constraint hit_status_vals check (status in ('Listed', 'Under Surveillance', 'Action Pending', 'Neutralized', 'De-escalated')),
     constraint threat_level_vals check (threat_level in ('Low', 'Moderate', 'High', 'Critical'))
 );
 
@@ -213,7 +213,7 @@ create table Task (
     primary key (task_id, operation_id),
     Foreign Key (operation_id) REFERENCES Operation(operation_id) on update CASCADE on delete CASCADE,
     Foreign Key (assigned_to) REFERENCES Associate(associate_id) on update cascade on delete set null,
-    constraint status_vals check (status in ('pending', 'failed', 'done'))
+    constraint task_status_vals check (status in ('pending', 'failed', 'done'))
 );
 
 create table Compensation (
