@@ -16,7 +16,7 @@ with st.form("create_employee"):
     role = st.selectbox("Role", ["lawyer","paralegal","receptionist","investigator"])
     salary = st.text_input("Salary")
     trust_level = st.number_input("Trust Level (1-10)", min_value=1, max_value=10, value=5, step=1)
-    bar_num_new = st.text_input("Bar Number (optional, only if role is lawyer)") if role == "lawyer" else None
+    bar_num_new = st.text_input("Bar Number (optional; used only when role is lawyer)")
     submitted = st.form_submit_button("Create")
     if submitted:
         try:

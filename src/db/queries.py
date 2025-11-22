@@ -63,9 +63,15 @@ def search_clients(conn, q, type_filter=None, lawyer=None, limit=50):
 
 def get_case_summary(conn, case_title):
     with conn.cursor() as cur:
-        sql1 = """SELECT ca.case_title, ca.description, ca.status, c.client_id, c.first_name, c.last_name, c.lawyer_assigned
-                  FROM Cases ca LEFT JOIN Client c ON c.client_id = ca.client_id
-                  WHERE ca.case_title = %s"""
+        sql1 = (
+            "SELECT ca.case_title, ca.description, ca.status, "
+            "c.client_id, c.first_name AS client_first, c.last_name AS client_last, c.lawyer_assigned, "
+            "le.first_name AS lawyer_first, le.last_name AS lawyer_last "
+            "FROM Cases ca LEFT JOIN Client c ON c.client_id = ca.client_id "
+            "LEFT JOIN Lawyer l ON l.bar_number = c.lawyer_assigned "
+            "LEFT JOIN Employee le ON le.employee_id = l.lawyer_id "
+            "WHERE ca.case_title = %s"
+        )
         cur.execute(sql1, (case_title,))
         _ui_debug(sql1, (case_title,))
         case_row = cur.fetchone()
@@ -264,6 +270,13 @@ def list_cases_basic(conn, limit=1000):
         _ui_debug(sql, (int(limit),))
         return [row["case_title"] for row in cur.fetchall()]
 
+def list_cases_for_client(conn, client_id, limit=1000):
+    sql = "SELECT case_title FROM Cases WHERE client_id = %s ORDER BY case_title LIMIT %s"
+    with conn.cursor() as cur:
+        cur.execute(sql, (int(client_id), int(limit)))
+        _ui_debug(sql, (int(client_id), int(limit)))
+        return [row["case_title"] for row in cur.fetchall()]
+
 def list_document_types(conn):
     sql = "SELECT DISTINCT type FROM Document WHERE type IS NOT NULL ORDER BY type"
     with conn.cursor() as cur:
@@ -334,6 +347,13 @@ def list_criminal_associates(conn):
         "FROM CriminalAssociate ca JOIN Associate a ON a.associate_id = ca.associate_id "
         "ORDER BY a.name"
     )
+    with conn.cursor() as cur:
+        cur.execute(sql)
+        _ui_debug(sql, None)
+        return cur.fetchall()
+
+def list_businesses(conn):
+    sql = "SELECT business_name, location FROM Associated_business ORDER BY business_name, location"
     with conn.cursor() as cur:
         cur.execute(sql)
         _ui_debug(sql, None)

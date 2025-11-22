@@ -111,13 +111,14 @@ with st.form("create_document_form"):
 st.subheader("Casefile Attachments")
 with st.form("attach_doc_casefile"):
     case_cf = st.selectbox("Case Title", list_cases_basic(conn), key="case_cf")
-    trials_cf = [r["trial_date"] for r in list_trials_for_case(conn, case_cf)]
-    trial_cf = st.selectbox("Trial Date", trials_cf, key="trial_cf")
+    trials_cf_rows = list_trials_for_case(conn, case_cf)
+    trials_cf = [r["trial_date"] for r in trials_cf_rows]
+    trial_cf = st.selectbox("Trial Date", trials_cf, key="trial_cf") if trials_cf else None
     clients = list_clients_basic(conn)
     client_map = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients}
     client_choice = st.selectbox("Client", list(client_map.keys()))
-    docs2 = list_documents_basic(conn)
-    doc_map2 = {f"{r['document_id']} - {r['title']}": r['document_id'] for r in docs2}
+    req_docs = list_required_docs_for_trial(conn, case_cf, trial_cf) if trial_cf else []
+    doc_map2 = {f"{r['document_id']} - {r['title']}": r['document_id'] for r in req_docs}
     doc_choice2 = st.selectbox("Document", list(doc_map2.keys()))
     suba = st.form_submit_button("Attach to Casefile", disabled=not (case_cf and trial_cf and client_choice in client_map and doc_choice2 in doc_map2))
     if suba:
@@ -135,13 +136,14 @@ with st.form("attach_doc_casefile"):
 
 with st.form("remove_doc_casefile"):
     case_cf2 = st.selectbox("Case Title", list_cases_basic(conn), key="case_cf2")
-    trials_cf2 = [r["trial_date"] for r in list_trials_for_case(conn, case_cf2)]
-    trial_cf2 = st.selectbox("Trial Date", trials_cf2, key="trial_cf2")
+    trials_cf2_rows = list_trials_for_case(conn, case_cf2)
+    trials_cf2 = [r["trial_date"] for r in trials_cf2_rows]
+    trial_cf2 = st.selectbox("Trial Date", trials_cf2, key="trial_cf2") if trials_cf2 else None
     clients2 = list_clients_basic(conn)
     client_map2 = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients2}
     client_choice2 = st.selectbox("Client", list(client_map2.keys()))
-    docs3 = list_documents_basic(conn)
-    doc_map3 = {f"{r['document_id']} - {r['title']}": r['document_id'] for r in docs3}
+    req_docs2 = list_required_docs_for_trial(conn, case_cf2, trial_cf2) if trial_cf2 else []
+    doc_map3 = {f"{r['document_id']} - {r['title']}": r['document_id'] for r in req_docs2}
     doc_choice3 = st.selectbox("Document", list(doc_map3.keys()))
     subr = st.form_submit_button("Remove from Casefile", disabled=not (case_cf2 and trial_cf2 and client_choice2 in client_map2 and doc_choice3 in doc_map3))
     if subr:

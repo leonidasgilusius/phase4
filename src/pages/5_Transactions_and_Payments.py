@@ -1,8 +1,8 @@
 import streamlit as st
 import logging
 from db.connection import get_connection
-from db.queries import list_clients_basic, list_cases_basic, payments_ledger
-from db.transaction_ops import record_fee_payment
+from db.queries import list_clients_basic, list_cases_basic, payments_ledger, list_cases_for_client, list_businesses
+from db.transaction_ops import record_fee_payment, record_business_fee
 
 logger = logging.getLogger(__name__)
 st.title("Transactions and Payments")
@@ -21,7 +21,8 @@ with st.form("record_fee"):
         clients = list_clients_basic(conn)
         client_map = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients}
         client_sel = st.selectbox("Client", list(client_map.keys()))
-        cases = list_cases_basic(conn)
+        client_id_selected = client_map.get(client_sel)
+        cases = list_cases_for_client(conn, client_id_selected) if client_id_selected else []
         case_sel = st.selectbox("Case Title", cases)
     sub = st.form_submit_button("Record Payment")
     if sub:
@@ -56,3 +57,28 @@ if st.button("Load Ledger"):
     except Exception as e:
         logger.exception("payments_ledger failed")
         st.error(str(e))
+
+st.divider()
+
+st.subheader("Record Business Fee Payment")
+with st.form("record_business_fee"):
+    b1, b2, b3 = st.columns(3)
+    with b1:
+        b_source = st.text_input("Source Account", key="b_src")
+        b_dest = st.text_input("Destination Account", key="b_dst")
+    with b2:
+        b_amount = st.text_input("Amount", key="b_amt")
+        b_date = st.date_input("Date", key="b_date")
+    with b3:
+        businesses = list_businesses(conn)
+        biz_map = {f"{r['business_name']} ({r['location']})": (r['business_name'], r['location']) for r in businesses}
+        biz_sel = st.selectbox("Business", list(biz_map.keys()) if biz_map else [])
+    sub_biz = st.form_submit_button("Record Business Fee", disabled=not biz_map)
+    if sub_biz:
+        try:
+            name, loc = biz_map[biz_sel]
+            tx = record_business_fee(conn, b_source, b_dest, b_amount, b_date, name, loc)
+            st.success(f"Business fee recorded (Transaction {tx})")
+        except Exception as e:
+            logger.exception("record_business_fee failed")
+            st.error(str(e))

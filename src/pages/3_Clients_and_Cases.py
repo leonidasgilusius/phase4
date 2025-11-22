@@ -119,7 +119,11 @@ if case_for_summary:
         c2.metric("Latest Trial", str(summary["latest_trial"]) if summary["latest_trial"] else "-")
         c3.metric("Total Paid", summary["total_paid"]) 
         st.write("Missing Required Docs:", summary["missing_required_docs"]) 
-        st.json(summary["case"])
+        case_info = summary.get("case") or {}
+        client_name = f"{case_info.get('client_first','') or ''} {case_info.get('client_last','') or ''}".strip() or "-"
+        lawyer_name = f"{case_info.get('lawyer_first','') or ''} {case_info.get('lawyer_last','') or ''}".strip() or "-"
+        st.write(f"Client: {client_name}")
+        st.write(f"Lawyer: {lawyer_name}")
     except Exception as e:
         logger.exception("get_case_summary failed")
         st.error(str(e))

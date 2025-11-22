@@ -8,6 +8,7 @@ from db.queries import (
     list_distinct_skills,
     list_all_skills,
     list_criminal_associates,
+    list_clients_basic,
 )
 from db.transaction_ops import create_associate, mark_criminal_associate, add_skill
 
@@ -25,7 +26,10 @@ with st.form("create_associate"):
         loyalty_score = st.number_input("Loyalty Score", min_value=1, max_value=10, value=5, step=1)
     with a3:
         account_no = st.text_input("Account No (optional)")
-        alias_client_id = st.text_input("Alias Client ID (optional)")
+        clients_for_alias = list_clients_basic(conn)
+        alias_map = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients_for_alias}
+        alias_choice = st.selectbox("Alias Client (optional)", [""] + list(alias_map.keys()))
+        alias_client_id = alias_map.get(alias_choice) if alias_choice else None
     sub = st.form_submit_button("Create")
     if sub:
         try:

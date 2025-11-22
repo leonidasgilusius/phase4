@@ -179,6 +179,10 @@ def record_fee_payment(conn, source_account, destination_account, amount, date_v
     client_id = ensure_int(client_id)
     try:
         with conn.cursor() as cur:
+            # Ensure the case belongs to the client
+            cur.execute("SELECT 1 FROM Cases WHERE case_title=%s AND client_id=%s", (case_title, client_id))
+            if not cur.fetchone():
+                raise ValueError("Client is not associated with the selected case")
             transaction_id = _next_id(conn, "Transaction", "transaction_id")
             sql1 = "INSERT INTO `Transaction` (transaction_id, source_account, destination_account, amount, date) VALUES (%s,%s,%s,%s,%s)"
             p1 = (transaction_id, source_account, destination_account, amount, date_value)
@@ -188,6 +192,31 @@ def record_fee_payment(conn, source_account, destination_account, amount, date_v
             p2 = (transaction_id, client_id, case_title)
             logger.debug("record_fee_payment.fee %s", p2)
             cur.execute(sql2, p2)
+        conn.commit()
+        return transaction_id
+    except Exception:
+        conn.rollback()
+        raise
+
+def record_business_fee(conn, source_account, destination_account, amount, date_value, business_name, location):
+    source_account = ensure_int(source_account)
+    destination_account = ensure_int(destination_account)
+    amount = ensure_int(amount)
+    date_value = ensure_date_str(date_value)
+    try:
+        with conn.cursor() as cur:
+            # Ensure business exists
+            cur.execute(
+                "SELECT 1 FROM Associated_business WHERE business_name=%s AND location=%s",
+                (business_name, location),
+            )
+            if not cur.fetchone():
+                raise ValueError("Selected business does not exist")
+            transaction_id = _next_id(conn, "Transaction", "transaction_id")
+            sql1 = "INSERT INTO `Transaction` (transaction_id, source_account, destination_account, amount, date) VALUES (%s,%s,%s,%s,%s)"
+            cur.execute(sql1, (transaction_id, source_account, destination_account, amount, date_value))
+            sql2 = "INSERT INTO Business_fee (transaction_id, business_name, location) VALUES (%s,%s,%s)"
+            cur.execute(sql2, (transaction_id, business_name, location))
         conn.commit()
         return transaction_id
     except Exception:
