@@ -40,10 +40,10 @@ INSERT INTO Client (client_id, first_name, last_name, phone, email, address, typ
 (103, 'Mexi', 'Gringo', 5055559922, 'mexi@county.gov', '1420 Carlisle Blvd', 'individual', '2002-06-01', 7707, 12984),
 (104, 'Richard', 'Schweikart', 5058881111, 'rich@s-c.com', 'Schweikart & Cokely HQ', 'business', '2003-01-20', 9004, 09283),
 (105, 'Lydia', 'Rodarte', 5059998111, 'lydia@madrigal.de', 'Madrigal Electromotive', 'business', '2003-11-15', 9005, 09283),
-(106, 'Jorge', 'Degruzman', 5058425999, 'temp@hotmail.com', 'Chihuahua, MX', 'cartel-affiliated', '2004-06-20', 7701, 18392),
-(107, 'Gustavo', 'Fring', 5052429999, 'owner@lospollos.com', 'Los Pollos Hermanos', 'business', '2001-01-01', 6662, 09283),
-(108, 'Biz', 'Natch', 5059991111, 'biznatch@yahoo.com', 'The South Valley', 'cartel-affiliated', '2002-03-15', 7705, 18392),
-(109, 'Rag', 'Decorator', 6059291111, 'ash@yahoo.com', 'Viggay Hall Road', 'cartel-affiliated', '2002-07-25', 7704, 18392);
+(201, 'Jorge', 'Degruzman', 5058425999, 'temp@hotmail.com', 'Chihuahua, MX', 'cartel-affiliated', '2004-06-20', 7701, 18392),
+(202, 'Gustavo', 'Fring', 5052429999, 'owner@lospollos.com', 'Los Pollos Hermanos', 'business', '2001-01-01', 6662, 09283),
+(203, 'Biz', 'Natch', 5059991111, 'biznatch@yahoo.com', 'The South Valley', 'cartel-affiliated', '2002-03-15', 7705, 18392),
+(204, 'Rag', 'Decorator', 6059291111, 'ash@yahoo.com', 'Viggay Hall Road', 'cartel-affiliated', '2002-07-25', 7704, 18392);
 
 INSERT INTO Associate (associate_id, name, status, loyalty_score, account_no, alias) VALUES 
 (1001, 'Lalo Salamanca', 'active', 9, 7701, 201),
