@@ -99,11 +99,11 @@ INSERT INTO Trial (trial_date, case_title) VALUES
 ('2002-04-20', 'Tuco Assault');
 
 INSERT INTO Document (document_id, title, type, file_path, file_size_bytes, mime_type, create_date) VALUES 
-(501, 'Bank Blueprints', 'blueprint', '/mesa/tucumcari_v2.pdf', 5000000, 'application/pdf', '2003-05-20'),
-(502, 'Shredded Inv', 'evidence', '/sandpiper/restored_invoice.jpg', 204800, 'image/jpeg', '2003-06-01'),
-(503, 'Bail Motion', 'legal', '/court/lalo_bail.docx', 25000, 'application/word', '2004-08-01'),
-(504, 'Lab Schematics', 'secret', '/gus/superlab_draft.dwg', 10000000, 'application/cad', '2003-01-15'),
-(505, 'Kettleman Plea', 'legal', '/court/plea_deal_betsy.pdf', 50000, 'application/pdf', '2002-08-01');
+(501, 'Bank Blueprints', 'blueprint', '/uploads/tucumcari_v2.pdf', 5000000, 'application/pdf', '2003-05-20'),
+(502, 'Shredded Inv', 'evidence', '/uploads/restored_invoice.jpg', 204800, 'image/jpeg', '2003-06-01'),
+(503, 'Bail Motion', 'legal', '/uploads/lalo_bail.docx', 25000, 'application/word', '2004-08-01'),
+(504, 'Lab Schematics', 'secret', '/uploads/superlab_draft.dwg', 10000000, 'application/cad', '2003-01-15'),
+(505, 'Kettleman Plea', 'legal', '/uploads/plea_deal_betsy.pdf', 50000, 'application/pdf', '2002-08-01');
 
 INSERT INTO Casefile (trial_date, document_id, case_title, client_id) VALUES 
 ('2003-09-05', 501, 'Mesa Verde Exp', 101),
