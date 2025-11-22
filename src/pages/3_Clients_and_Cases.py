@@ -118,7 +118,6 @@ if case_for_summary:
         c1.metric("Status", summary["case"]["status"] if summary["case"] else "-")
         c2.metric("Latest Trial", str(summary["latest_trial"]) if summary["latest_trial"] else "-")
         c3.metric("Total Paid", summary["total_paid"]) 
-        st.write("Missing Required Docs:", summary["missing_required_docs"]) 
         case_info = summary.get("case") or {}
         client_name = f"{case_info.get('client_first','') or ''} {case_info.get('client_last','') or ''}".strip() or "-"
         lawyer_name = f"{case_info.get('lawyer_first','') or ''} {case_info.get('lawyer_last','') or ''}".strip() or "-"

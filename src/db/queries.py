@@ -26,7 +26,7 @@ def get_kpis(conn, upcoming_days=7):
         sql3 = """SELECT COALESCE(SUM(t.amount),0) AS total_mtd
                   FROM `Transaction` t
                   JOIN Fee_payment f ON f.transaction_id = t.transaction_id
-                  WHERE t.date BETWEEN DATE_FORMAT(CURDATE(), '%%Y-%%m-01') AND CURDATE()"""
+                  WHERE t.date BETWEEN DATE_FORMAT(CURDATE(), '%Y-%m-01') AND CURDATE()"""
         cur.execute(sql3)
         _ui_debug(sql3, None)
         total_mtd = cur.fetchone()["total_mtd"]
@@ -88,14 +88,7 @@ def get_case_summary(conn, case_title):
         _ui_debug(sql3, (case_title,))
         total_paid = cur.fetchone()["total_paid"]
 
-        sql4 = """SELECT COUNT(*) AS missing
-                  FROM Documents_required dr
-                  LEFT JOIN Casefile cf ON cf.document_id = dr.document_id AND cf.trial_date = dr.trial_date AND cf.case_title = dr.case_title
-                  WHERE dr.case_title = %s AND cf.document_id IS NULL"""
-        cur.execute(sql4, (case_title,))
-        _ui_debug(sql4, (case_title,))
-        missing_docs = cur.fetchone()["missing"]
-        return {"case": case_row, "latest_trial": latest_trial, "total_paid": total_paid, "missing_required_docs": missing_docs}
+        return {"case": case_row, "latest_trial": latest_trial, "total_paid": total_paid,}
 
 def get_upcoming_trials_with_missing_docs(conn, days=14):
     sql = """SELECT tr.trial_date, tr.case_title,
