@@ -57,6 +57,7 @@ def upgrade_to_lawyer(conn, employee_id, bar_number):
             params = (employee_id, assigned_bar)
             logger.debug("upgrade_to_lawyer %s", params)
             cur.execute(sql, params)
+            cur.execute("UPDATE Employee SET role='lawyer' WHERE employee_id=%s", (employee_id))
         conn.commit()
         return assigned_bar
     except Exception:
