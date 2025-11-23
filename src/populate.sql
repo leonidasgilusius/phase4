@@ -98,12 +98,18 @@ INSERT INTO Trial (trial_date, case_title) VALUES
 ('2004-08-15', 'State v. DeGuzman'),
 ('2002-04-20', 'Tuco Assault');
 
-INSERT INTO Document (document_id, title, type, file_path, file_size_bytes, mime_type, create_date) VALUES 
+INSERT INTO Document (document_id, title, type, file_path, file_size_bytes, mime_type, created_date) VALUES 
 (501, 'Bank Blueprints', 'blueprint', '/uploads/tucumcari_v2.pdf', 5000000, 'application/pdf', '2003-05-20'),
 (502, 'Shredded Inv', 'evidence', '/uploads/restored_invoice.jpg', 204800, 'image/jpeg', '2003-06-01'),
 (503, 'Bail Motion', 'legal', '/uploads/lalo_bail.docx', 25000, 'application/word', '2004-08-01'),
 (504, 'Lab Schematics', 'secret', '/uploads/superlab_draft.dwg', 10000000, 'application/cad', '2003-01-15'),
 (505, 'Kettleman Plea', 'legal', '/uploads/plea_deal_betsy.pdf', 50000, 'application/pdf', '2002-08-01');
+
+insert into `Documents_required` (trial_date, document_id, case_title) VALUES
+('2003-09-05', 501, 'Mesa Verde Exp'),
+('2003-11-10', 502, 'Sandpiper Crossing'),
+('2004-08-15', 503, 'State v. DeGuzman'),
+('2002-07-15', 505, 'Kettleman Embezzle');
 
 INSERT INTO Casefile (trial_date, document_id, case_title, client_id) VALUES 
 ('2003-09-05', 501, 'Mesa Verde Exp', 101),
@@ -130,12 +136,15 @@ INSERT INTO Task (task_id, operation_id, description, status, deadline, assigned
 -- 9. TRANSACTIONS & FEES
 -- =======================================================
 INSERT INTO Transaction (transaction_id, source_account, destination_account, amount, date) VALUES 
-(1001, 9001, 5000, 25000, '2003-06-01'),   -- Mesa Verde Retainer
-(1002, 9005, 5000, 50000, '2003-12-01'),   -- Madrigal Fee
-(1003, 6661, 9999, 7000000, '2004-08-16'), -- Lalo Bail (Big money)
-(1004, 6662, 7701, 5000, '2003-10-02'),    -- Gus pays Leon
-(1005, 6662, 7703, 7500, '2003-10-06'),    -- Gus pays Sreevijay
-(1006, 6663, 7704, 2000, '2025-11-07');    -- Tuco pays Ashlin
+(1001, 9001, 5000, 25000, '2003-06-01'),  
+(1002, 9005, 5000, 50000, '2003-12-01'),
+(1003, 6661, 9999, 7000000, '2004-08-16'), 
+(1004, 6662, 7701, 5000, '2003-10-02'),  
+(1005, 6662, 7703, 7500, '2003-10-06'),  
+(1006, 6663, 7704, 2000, '2025-11-07'),
+(1007, 9990011, 8574301, 50000, '2003-05-12'),
+(1008, 9990022, 4455882, 2000000, '2003-06-15'),
+(1009, 9990011, 8574301, 2500, '2003-05-14');   
 
 INSERT INTO Fee_payment (transaction_id, client_id, case_title) VALUES 
 (1001, 101, 'Mesa Verde Exp'),
@@ -151,4 +160,12 @@ INSERT INTO Hitlist (Target_id, codename, status, justification, threat_level, a
 (992, 'Hank', 'Under Surveillance', 'DEA investigation overlap', 'High', 1002), -- Sanjith watching Hank
 (993, 'Esposito', 'Action Pending', 'Competitor in territory', 'Moderate', 1004); -- Ashlin assigned
 
+INSERT INTO Associated_business (business_name, location, account_no, handler_id) VALUES 
+('Los Pollos Hermanos', 'Albuquerque', 8574301, 1006),
+('Madrigal', 'Houston', 4455882, 1002);
+
+INSERT INTO Business_fee (transaction_id, business_name, location)
+VALUES (1007, 'Los Pollos Hermanos', 'Albuquerque'),
+(1008, 'Madrigal', 'Houston'),
+(1009, 'Los Pollos Hermanos', 'Albuquerque');
 SET FOREIGN_KEY_CHECKS = 1;

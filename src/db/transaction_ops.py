@@ -267,17 +267,17 @@ def add_skill(conn, associate_id, skill_name):
         conn.rollback()
         raise
 
-def create_document(conn, title, type_value, file_path, file_size_bytes, mime_type, create_date):
+def create_document(conn, title, type_value, file_path, file_size_bytes, mime_type, created_date):
     file_size_bytes = ensure_int(file_size_bytes)
-    create_date = ensure_date_str(create_date)
+    created_date = ensure_date_str(created_date)
     try:
         with conn.cursor() as cur:
             document_id = _next_id(conn, "Document", "document_id")
             sql = (
-                "INSERT INTO Document (document_id, title, type, file_path, file_size_bytes, mime_type, create_date) "
+                "INSERT INTO Document (document_id, title, type, file_path, file_size_bytes, mime_type, created_date) "
                 "VALUES (%s,%s,%s,%s,%s,%s,%s)"
             )
-            params = (document_id, title, type_value, file_path, file_size_bytes, mime_type, create_date)
+            params = (document_id, title, type_value, file_path, file_size_bytes, mime_type, created_date)
             logger.debug("create_document %s", params)
             cur.execute(sql, params)
         conn.commit()

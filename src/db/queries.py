@@ -117,7 +117,7 @@ def list_lawyer_caseload(conn, bar_number):
         return cur.fetchall()
 
 def document_search(conn, title_like=None, type_filter=None, date_from=None, date_to=None, mime=None, limit=100):
-    sql = "SELECT document_id, title, type, file_path, file_size_bytes, mime_type, create_date FROM Document WHERE 1=1"
+    sql = "SELECT document_id, title, type, file_path, file_size_bytes, mime_type, created_date FROM Document WHERE 1=1"
     params = []
     if title_like:
         sql += " AND title LIKE %s"
@@ -126,15 +126,15 @@ def document_search(conn, title_like=None, type_filter=None, date_from=None, dat
         sql += " AND type = %s"
         params.append(type_filter)
     if date_from:
-        sql += " AND create_date >= %s"
+        sql += " AND created_date >= %s"
         params.append(date_from)
     if date_to:
-        sql += " AND create_date <= %s"
+        sql += " AND created_date <= %s"
         params.append(date_to)
     if mime:
         sql += " AND mime_type = %s"
         params.append(mime)
-    sql += " ORDER BY create_date DESC LIMIT %s"
+    sql += " ORDER BY created_date DESC LIMIT %s"
     params.append(int(limit))
     with conn.cursor() as cur:
         cur.execute(sql, tuple(params))
@@ -218,7 +218,7 @@ def list_trials_for_case(conn, case_title):
 
 def list_required_docs_for_trial(conn, case_title, trial_date):
     sql = (
-        "SELECT dr.document_id, d.title, d.type, d.mime_type, d.create_date "
+        "SELECT dr.document_id, d.title, d.type, d.mime_type, d.created_date "
         "FROM Documents_required dr JOIN Document d ON d.document_id = dr.document_id "
         "WHERE dr.case_title = %s AND dr.trial_date = %s"
     )
@@ -229,7 +229,7 @@ def list_required_docs_for_trial(conn, case_title, trial_date):
 
 def list_casefile_docs(conn, case_title, trial_date, client_id):
     sql = (
-        "SELECT cf.document_id, d.title, d.type, d.mime_type, d.create_date "
+        "SELECT cf.document_id, d.title, d.type, d.mime_type, d.created_date "
         "FROM Casefile cf JOIN Document d ON d.document_id = cf.document_id "
         "WHERE cf.case_title = %s AND cf.trial_date = %s AND cf.client_id = %s"
     )
@@ -255,6 +255,13 @@ def list_clients_basic(conn, limit=500):
         cur.execute(sql, (int(limit),))
         _ui_debug(sql, (int(limit),))
         return cur.fetchall()
+    
+def list_client_of_case(conn, case_title):
+    sql = "SELECT client_id, first_name, last_name FROM Client natural join Cases where case_title=%s"
+    with conn.cursor() as cur:
+        cur.execute(sql, (str(case_title),))
+        _ui_debug(sql, (str(case_title),))
+        return cur.fetchone()
 
 def list_cases_basic(conn, limit=1000):
     sql = "SELECT case_title FROM Cases ORDER BY case_title LIMIT %s"
@@ -296,7 +303,7 @@ def get_upcoming_trials(conn, days=14):
         return cur.fetchall()
 
 def list_documents_basic(conn, limit=1000):
-    sql = "SELECT document_id, title FROM Document ORDER BY create_date DESC LIMIT %s"
+    sql = "SELECT document_id, title FROM Document ORDER BY created_date DESC LIMIT %s"
     with conn.cursor() as cur:
         cur.execute(sql, (int(limit),))
         _ui_debug(sql, (int(limit),))

@@ -72,7 +72,7 @@ create table Document (
     file_path VARCHAR(500) NOT NULL,
     file_size_bytes INT,
     mime_type VARCHAR(50),
-    create_date date,
+    created_date date,
     primary key (document_id)
 );
 

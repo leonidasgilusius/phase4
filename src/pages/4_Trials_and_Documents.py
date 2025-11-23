@@ -2,7 +2,7 @@ import streamlit as st
 import logging
 import os
 from db.connection import get_connection
-from db.queries import list_cases_basic, list_trials_for_case, list_required_docs_for_trial, list_casefile_docs, document_search, list_clients_basic, list_documents_basic
+from db.queries import list_client_of_case, list_cases_basic, list_trials_for_case, list_required_docs_for_trial, list_casefile_docs, document_search, list_clients_basic, list_documents_basic, list_cases_for_client
 from db.transaction_ops import schedule_trial, add_required_document, create_document, attach_document_to_casefile, remove_document_from_casefile
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ with st.form("create_document_form"):
     with d1:
         title = st.text_input("Title")
         type_value = st.text_input("Type (optional)")
-        create_date = st.date_input("Create Date")
+        create_date = st.date_input("Date Created")
     with d2:
         uploaded = st.file_uploader("Upload file", type=None, accept_multiple_files=False, help="Drag & drop or browse a file to store")
     subd = st.form_submit_button("Create Document")
@@ -109,14 +109,17 @@ with st.form("create_document_form"):
             st.error(str(e))
 
 st.subheader("Casefile Attachments")
+
+clients = list_clients_basic(conn)
+client_map = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients}
+client_choice = st.selectbox("Client", list(client_map.keys()))
+client_selected_id = client_map.get(client_choice)
+case_cf = st.selectbox("Case Title", list_cases_for_client(conn, client_selected_id))
+
 with st.form("attach_doc_casefile"):
-    case_cf = st.selectbox("Case Title", list_cases_basic(conn), key="case_cf")
     trials_cf_rows = list_trials_for_case(conn, case_cf)
     trials_cf = [r["trial_date"] for r in trials_cf_rows]
     trial_cf = st.selectbox("Trial Date", trials_cf, key="trial_cf") if trials_cf else None
-    clients = list_clients_basic(conn)
-    client_map = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients}
-    client_choice = st.selectbox("Client", list(client_map.keys()))
     req_docs = list_required_docs_for_trial(conn, case_cf, trial_cf) if trial_cf else []
     doc_map2 = {f"{r['document_id']} - {r['title']}": r['document_id'] for r in req_docs}
     doc_choice2 = st.selectbox("Document", list(doc_map2.keys()))
@@ -134,15 +137,14 @@ with st.form("attach_doc_casefile"):
             logger.exception("attach_document_to_casefile failed")
             st.error(str(e))
 
+client_map2 = client_map
+client_choice2 = client_choice
+case_cf2 = case_cf
 with st.form("remove_doc_casefile"):
-    case_cf2 = st.selectbox("Case Title", list_cases_basic(conn), key="case_cf2")
     trials_cf2_rows = list_trials_for_case(conn, case_cf2)
     trials_cf2 = [r["trial_date"] for r in trials_cf2_rows]
     trial_cf2 = st.selectbox("Trial Date", trials_cf2, key="trial_cf2") if trials_cf2 else None
-    clients2 = list_clients_basic(conn)
-    client_map2 = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients2}
-    client_choice2 = st.selectbox("Client", list(client_map2.keys()))
-    req_docs2 = list_required_docs_for_trial(conn, case_cf2, trial_cf2) if trial_cf2 else []
+    req_docs2 = list_casefile_docs(conn, case_cf2, trial_cf2, client_map2.get(client_choice2)) if trial_cf2 else []
     doc_map3 = {f"{r['document_id']} - {r['title']}": r['document_id'] for r in req_docs2}
     doc_choice3 = st.selectbox("Document", list(doc_map3.keys()))
     subr = st.form_submit_button("Remove from Casefile", disabled=not (case_cf2 and trial_cf2 and client_choice2 in client_map2 and doc_choice3 in doc_map3))
@@ -160,17 +162,16 @@ with st.form("remove_doc_casefile"):
             st.error(str(e))
 
 st.subheader("View Casefile Documents")
+case_view = st.selectbox("Case Title", list_cases_basic(conn), key="case_view_cf")
+clients3 = list_client_of_case(conn, case_view)
+client_choice3 = clients3['client_id']
 with st.form("view_casefile"):
-    case_view = st.selectbox("Case Title", list_cases_basic(conn), key="case_view_cf")
     trials_view = [r["trial_date"] for r in list_trials_for_case(conn, case_view)]
     trial_view = st.selectbox("Trial Date", trials_view, key="trial_view")
-    clients3 = list_clients_basic(conn)
-    client_map3 = {f"{r['client_id']} - {r['first_name']} {r['last_name']}": r['client_id'] for r in clients3}
-    client_choice3 = st.selectbox("Client", list(client_map3.keys()))
-    subv = st.form_submit_button("Load Casefile Docs", disabled=not (case_view and trial_view and client_choice3 in client_map3))
+    subv = st.form_submit_button("Load Casefile Docs", disabled=not (case_view and trial_view))
     if subv:
         try:
-            client_view_val = client_map3.get(client_choice3)
+            client_view_val = client_choice3
             docs = list_casefile_docs(conn, case_view, trial_view, client_view_val)
             st.dataframe(docs)
         except Exception as e:
